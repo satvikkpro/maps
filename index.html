@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maps test</title>
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
+      <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+ integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+ crossorigin=""></script>
+
+ <style>
+    #map{
+        height:350px;
+    }
+ </style>
+</head>
+<body>
+ <h1>Maps user location</h1>  
+ 
+ <div id="map"></div>
+</body>
+<script>
+    var map = L.map('map');
+    map.setView([51.505,-0.09],13);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+        maxZoom:19,
+        attribution:'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+
+    if(!navigator.geolocation){
+        console.log("Your browser doesn't support this feature")
+    }
+    else{
+        setInterval(() => {
+           navigator.geolocation.getCurrentPosition(getPosition) 
+        }, 5000);
+    }
+
+    var marker,circle;
+
+    function getPosition(position){
+        console.log(position);
+        var latitude = position.coords.latitude
+        var longitude = position.coords.longitude
+        var coordinates = position.coords.accuracy
+    
+
+    if(marker){
+        map.removeLayer(marker);
+    }
+    if(circle){
+        map.removeLayer(circle)
+    }
+    marker = L.marker([latitude,longitude])
+    circle = L.circle([latitude,longitude],{radius:coordinates})
+
+    var featureGroup =L.featureGroup([marker,circle]).addTo(map)
+    map.fitBounds(featureGroup.getBounds())
+
+
+
+}
+</script>
+</html>
